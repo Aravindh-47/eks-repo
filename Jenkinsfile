@@ -4,7 +4,7 @@ pipeline {
     environment {
         AWS_ACCOUNT_ID = '782989862398'
         AWS_REGION = 'ap-south-1'
-        ECR_REPO = 'jenkins-eks-demo'
+        ECR_REPO = 'devops-demo-app'
     }
 
     stages {
