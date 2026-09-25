@@ -33,5 +33,18 @@ pipeline {
                 """
             }
         }
+        stage('Deploy To EKS') {
+            steps {
+                sh '''
+                aws eks update-kubeconfig \
+                --region ap-south-1 \
+                --name demo-eks-cluster
+ 
+                kubectl apply -f deployment.yaml
+                kubectl apply -f service.yaml
+                '''
+             }
+         }
+
     }
 }
