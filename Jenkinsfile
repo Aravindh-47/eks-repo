@@ -3,8 +3,9 @@ pipeline {
 
     environment {
         AWS_ACCOUNT_ID = '782989862398'
-        AWS_REGION = 'ap-south-1'
-        ECR_REPO = 'devops-demo-app'
+        AWS_REGION     = 'ap-south-1'
+        ECR_REPO       = 'devops-demo-app'
+        CLUSTER_NAME   = 'demo-eks-cluster'
     }
 
     stages {
@@ -17,34 +18,47 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh """
+                sh '''
                 docker build -t ${ECR_REPO}:latest .
                 docker tag ${ECR_REPO}:latest ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:latest
-                """
+                '''
             }
         }
 
         stage('Push To ECR') {
             steps {
-                sh """
+                sh '''
                 aws ecr get-login-password --region ${AWS_REGION} | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
 
                 docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}:latest
-                """
+                '''
             }
         }
+
         stage('Deploy To EKS') {
             steps {
                 sh '''
-                aws eks update-kubeconfig \
-                --region ap-south-1 \
-                --name demo-eks-cluster
- 
-                kubectl apply -f deployment.yaml
-                kubectl apply -f service.yaml
-                '''
-             }
-         }
+                aws eks update-kubeconfig --region ${AWS_REGION} --name ${CLUSTER_NAME}
 
+                kubectl apply -f deployment.yaml
+
+                kubectl apply -f service.yaml
+
+                kubectl get pods
+
+                kubectl get svc
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Application successfully deployed to EKS'
+        }
+
+        failure {
+            echo 'Pipeline failed'
+        }
     }
 }
