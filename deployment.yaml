@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: cicd-demo
-        image: 782989862398.dkr.ecr.ap-south-1b.amazonaws.com/jenkins-eks-demo:latest
+        image: 782989862398.dkr.ecr.ap-south-1.amazonaws.com/jenkins-eks-demo:latest
         ports:
         - containerPort: 5000
