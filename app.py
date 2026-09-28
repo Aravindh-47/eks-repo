@@ -7,7 +7,7 @@ def home():
     return """
     <h1>CICD Demo Application</h1>
     <h2>Jenkins → Docker → ECR → EKS</h2>
-    <p>Deployment Successful!</p>
+    <p>Updated Deployment Successful!</p>
     """
 
 @app.route("/health")
